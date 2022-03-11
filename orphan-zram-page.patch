@@ -1,0 +1,14 @@
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 438ce34ee760..fea46a70a3c9 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1265,6 +1265,9 @@ static int __zram_bvec_read(struct zram *zram, struct page *page, u32 index,
+ 		unsigned long value;
+ 		void *mem;
+ 
++		if (WARN_ON(!handle && !zram_test_flag(zram, index, ZRAM_SAME)))
++			pr_warn("Page %u read from zram without previous write\n", index);
++
+ 		value = handle ? zram_get_element(zram, index) : 0;
+ 		mem = kmap_atomic(page);
+ 		zram_fill_page(mem, PAGE_SIZE, value);
